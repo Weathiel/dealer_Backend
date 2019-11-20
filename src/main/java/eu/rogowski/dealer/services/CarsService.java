@@ -27,8 +27,4 @@ public class CarsService {
         return carsRepository.findAllByBrand(brand);
     }
 
-    public List<Cars> saveAll() {
-        return new ArrayList<Cars>();
-    }
-
 }

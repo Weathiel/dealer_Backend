@@ -33,6 +33,6 @@ public class CarsController {
     }
 
     @GetMapping(value = "/models", params = "brand")
-    public List<Cars> getCarsModelByBrand(@RequestParam String brand){return carsService.findModelByBrand(brand);}
+    public List<Cars> getCarsModelByBrand(@RequestParam String brand){return carsService.findAllByBrand(brand);}
 
 }
