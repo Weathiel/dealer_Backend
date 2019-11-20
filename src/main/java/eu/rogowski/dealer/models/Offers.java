@@ -12,7 +12,7 @@ import java.util.Date;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Getter @Setter @NoArgsConstructor
-public class Offers {
+public class Offers extends AuditModel{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long offerId;
@@ -29,7 +29,7 @@ public class Offers {
     private Boolean english_car;
 
     @NotNull
-    private Boolean archvized;
+    private Boolean archivized;
 
     private Date production_date;
 
