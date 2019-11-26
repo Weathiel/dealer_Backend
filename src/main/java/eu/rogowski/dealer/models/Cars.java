@@ -7,7 +7,6 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 public class Cars {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

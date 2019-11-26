@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,13 +17,12 @@ import java.util.List;
 public class CarsService {
     private final CarsRepository carsRepository;
 
-    public Page<Cars> getCarsPage(String page, String pageSize) {
-        Pageable pageable = PageRequest.of(Integer.valueOf(page), Integer.valueOf(pageSize), Sort.by(Sort.Direction.ASC, "carId"));
+    public Page<Cars> getCarsPage(Integer page, Integer pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.ASC, "carId"));
         return carsRepository.findAll(pageable);
     }
 
     public List<Cars> findAllByBrand(String brand) {
         return carsRepository.findAllByBrand(brand);
     }
-
 }

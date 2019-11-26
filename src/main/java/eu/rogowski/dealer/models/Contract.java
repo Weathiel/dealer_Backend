@@ -17,7 +17,8 @@ public class Contract {
 
     private Boolean done;
 
-    @ManyToOne
-    @JoinColumn
-    private Orders orders;
+    public Contract(Float deposit, Boolean done) {
+        this.deposit = deposit;
+        this.done = done;
+    }
 }

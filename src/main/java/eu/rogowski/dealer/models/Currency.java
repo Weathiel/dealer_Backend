@@ -10,9 +10,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Getter @Setter @NoArgsConstructor
-public class Currency {
+public class Currency extends Auditable<String>{
     @Id
     @JoinColumn
     private Long currencyId;
