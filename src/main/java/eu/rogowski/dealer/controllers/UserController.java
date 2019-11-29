@@ -5,6 +5,7 @@ import eu.rogowski.dealer.models.dto.UserDTO;
 import eu.rogowski.dealer.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class UserController {
+public class UserController{
     private final UserService userService;
 
     @GetMapping(params = {"page", "size"})
@@ -32,9 +33,19 @@ public class UserController {
         return userService.getUserByUsername(username);
     }
 
+    @PostMapping("/login")
+    public String login(@RequestBody UserDTO userDTO){
+        return userService.login(userDTO.getUsername(), userDTO.getPassword());
+    }
+
     @PostMapping(value = "/register")
     public void registerUser(@RequestBody UserDTO userDTO){
+        userService.registerUser(userDTO);
+    }
 
+    @PostMapping("/token")
+    public User getUserByToken(@RequestBody String token){
+        return userService.findByToken(token);
     }
 
     @PutMapping(value = "/change", params = {"id", "password"})

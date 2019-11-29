@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"username", "password", "email"}))
 @Getter @Setter @NoArgsConstructor
 public class User extends Auditable<String>{
     @Id
@@ -17,11 +18,9 @@ public class User extends Auditable<String>{
     @NotNull
     private Long userId;
 
-    @UniqueElements
     @NotNull
     private String username;
 
-    @UniqueElements
     @NotNull
     private String password;
 
@@ -36,6 +35,8 @@ public class User extends Auditable<String>{
     private String address;
 
     private Integer phoneNumber;
+
+    private String accessToken;
 
     @ManyToOne
     @JoinColumn
