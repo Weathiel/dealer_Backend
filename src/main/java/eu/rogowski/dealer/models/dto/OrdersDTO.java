@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class OrdersDTO {
     private Long orderId;
 
@@ -18,7 +20,6 @@ public class OrdersDTO {
 
     private Long contractId;
 
-    private Boolean done;
+    private ContractDTO contract;
 
-    private Float deposit;
 }

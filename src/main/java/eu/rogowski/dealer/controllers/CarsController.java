@@ -18,20 +18,9 @@ public class CarsController {
 
     private final CarsService carsService;
 
-    @GetMapping(params = {"page", "size"})
-    public List<Cars> getPageOfCars(@RequestParam Integer page,
-                                    @RequestParam Integer size) {
-        return carsService.getCarsPage(page, size).toList();
-    }
-
-    @GetMapping(params = "brand")
-    public List<Cars> getCarsByBrand(@RequestParam String brand) {
-        return carsService.findAllByBrand(brand);
-    }
-
-    @GetMapping(value = "/models", params = "brand")
-    public List<Cars> getCarsModelByBrand(@RequestParam String brand) {
-        return carsService.findAllByBrand(brand);
+    @GetMapping("/all")
+    public List<Cars> getAll(){
+        return carsService.getAll();
     }
 
 }

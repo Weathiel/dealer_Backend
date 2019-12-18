@@ -5,8 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
+
 @Getter @Setter @NoArgsConstructor
 public class UserDTO {
+
     private String username;
 
     private String password;
@@ -18,6 +21,8 @@ public class UserDTO {
     private String email;
 
     private String city;
+
+    private String token;
 
     private String address;
 

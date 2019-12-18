@@ -6,6 +6,7 @@ import eu.rogowski.dealer.services.CarsService;
 import eu.rogowski.dealer.services.OffersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,14 +26,22 @@ public class OffersController {
         return offersService.findAll(page, size).toList();
     }
 
+    @GetMapping("/lenght")
+    public Long lenght(){
+        return offersService.lenght();
+    }
+
     @PostMapping("/new")
+    @PreAuthorize("hasAnyRole('ROLE_WORKER', 'ROLE_ADMIN')")
     public Offers newOffer(@RequestBody OffersDTO offersDTO) {
         return offersService.newOffer(offersDTO);
     }
 
-    @PutMapping(value = "/sold", params = "id")
-    public void carSold(@RequestParam Long id) {
-        offersService.arichivizeOffer(id);
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_WORKER', 'ROLE_ADMIN')")
+    public void carSold(@PathVariable Long id,
+            @RequestBody OffersDTO offersDTO) {
+        offersService.update(offersDTO, id);
     }
 
 }

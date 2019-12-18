@@ -27,6 +27,9 @@ public class OffersService {
         return offersRepository.findAll(pageable);
     }
 
+    public Long lenght(){
+        return offersRepository.count();
+    }
 
     public Offers newOffer(OffersDTO offersDTO) {
         Offers offers = modelMapper.map(offersDTO, Offers.class);
@@ -35,10 +38,10 @@ public class OffersService {
         return offersRepository.save(offers);
     }
 
-    public void arichivizeOffer(Long id) {
-        offersRepository.findById(id).map(offers -> {
-            offers.setArchivized(true);
-            return offersRepository.save(offers);
-        }).orElseThrow(() -> new ResourceNotFoundException("Didn't found offer with id: " + id));
+    public void update(OffersDTO offersDTO, Long id) {
+        Offers offers = offersRepository.getOne(id);
+        offers.setArchivized(offersDTO.getArchivized());
+        offers.setPrice(offersDTO.getPrice());
+        offersRepository.save(offers);
     }
 }
