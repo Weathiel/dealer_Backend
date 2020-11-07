@@ -30,6 +30,8 @@ public class Offers extends Auditable<String> implements Serializable {
 
     private Boolean englishCar;
 
+    private String image;
+
     @NotNull
     private Boolean archivized;
 
