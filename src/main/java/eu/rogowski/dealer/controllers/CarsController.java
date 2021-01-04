@@ -3,7 +3,9 @@ package eu.rogowski.dealer.controllers;
 import eu.rogowski.dealer.models.Cars;
 import eu.rogowski.dealer.services.CarsService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +23,11 @@ public class CarsController {
     @GetMapping("/all")
     public List<Cars> getAll(){
         return carsService.getAll();
+    }
+
+    @GetMapping("/lenght")
+    public ResponseEntity<Integer> getCarsLenght(){
+        return ResponseEntity.ok(this.carsService.getAll().size());
     }
 
 }
