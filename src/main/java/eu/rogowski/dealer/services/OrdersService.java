@@ -26,7 +26,6 @@ public class OrdersService {
     private final UserRepository userRepository;
     private final OffersRepository offersRepository;
     private final ContractRepository contractRepository;
-    private final CurrencyRepository currencyRepository;
     @Autowired
     private final ModelMapper modelMapper;
     @Autowired
@@ -72,8 +71,6 @@ public class OrdersService {
 
         orders.setOffers(offersRepository.findById(ordersDTO.getOfferId())
                 .orElseThrow(() -> new ResourceNotFoundException("Didn't found offer with id: " + ordersDTO.getOfferId())));
-
-        orders.setCurrencies(currencyRepository.findAll());
 
         orders.setTotalPrice(orders.getOffers().getPrice() * (100 - orders.getDiscount()) / (float) 100);
 

@@ -20,6 +20,15 @@ public class JwtUtils {
     @Value("${dealer.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
+    public String generateJwtToken(String email) {
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date(new Date().getTime()))
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
+
     public String generateJwtToken(Authentication authentication) {
         UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
         return Jwts.builder()

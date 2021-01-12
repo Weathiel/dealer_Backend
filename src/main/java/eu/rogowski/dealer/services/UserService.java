@@ -6,11 +6,10 @@ import eu.rogowski.dealer.models.User;
 import eu.rogowski.dealer.models.UserDetailsImpl;
 import eu.rogowski.dealer.models.dto.UserDTO;
 import eu.rogowski.dealer.payload.JwtResponse;
+import eu.rogowski.dealer.payload.ResponseJSON;
 import eu.rogowski.dealer.repositories.RoleRepository;
 import eu.rogowski.dealer.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -64,11 +62,11 @@ public class UserService {
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User: " + username + " not found!"));
     }
 
-    public Integer getLengthOfUsers(){
+    public Integer getLengthOfUsers() {
         return userRepository.findAll().size();
     }
 
-    public String getRole(HttpServletRequest httpServletRequest){
+    public String getRole(HttpServletRequest httpServletRequest) {
         return getToken(httpServletRequest).getRole().getRolename();
     }
 
@@ -79,14 +77,20 @@ public class UserService {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
-        List list = userDetailsImpl.getAuthorities().stream().map(auth ->  auth.getAuthority()
+
+        boolean enabled = getUserByUsername(userDetailsImpl.getUsername()).isActivated();
+        if (!enabled) {
+            return ResponseEntity.badRequest().body(new ResponseJSON("User isn't verified", 500));
+        }
+
+        List list = userDetailsImpl.getAuthorities().stream().map(auth -> auth.getAuthority()
         ).collect(Collectors.toList());
 
-        return ResponseEntity.ok(new JwtResponse(userDetailsImpl.getId(), userDetailsImpl.getUsername(), userDetailsImpl.getPassword(),  list, jwt));
+        return ResponseEntity.ok(new JwtResponse(userDetailsImpl.getId(), userDetailsImpl.getUsername(), userDetailsImpl.getPassword(), list, jwt));
 
     }
 
-    public User getToken(HttpServletRequest httpServletRequest){
+    public User getToken(HttpServletRequest httpServletRequest) {
         return userRepository.findByUsername(jwtUtils.getUsernameByToken(authTokenFilter.parseJwt(httpServletRequest)))
                 .orElseThrow(() -> new UsernameNotFoundException("User for token wasn't found"));
     }
@@ -110,16 +114,41 @@ public class UserService {
 
         userRepository.save(user);
 
-        return ResponseEntity.ok("User successfully created!");
+        return ResponseEntity.ok(new ResponseJSON("User successfully created!", 200));
     }
 
-    public void delete(Long id){
+    public void delete(Long id) {
         userRepository.delete(userRepository.getOne(id));
     }
 
-    public void update(Long id, UserDTO userDTO){
+    public void update(Long id, UserDTO userDTO) {
         User user = userRepository.getOne(id);
         user.setRole(roleRepository.getOne(userDTO.getRoleId()));
         userRepository.save(user);
+    }
+
+    public User updateVerificationToken(String mailTo) {
+        User user = userRepository.findByEmail(mailTo).orElseThrow(() -> new UsernameNotFoundException("User wasn't found"));
+
+        String accessToken = jwtUtils.generateJwtToken(mailTo);
+        accessToken = accessToken.replaceAll("[^a-zA-Z0-9]", "");
+        user.setAccessToken(accessToken);
+        userRepository.save(user);
+
+        return user;
+    }
+
+    public ResponseEntity enableUser(String username, String token) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Cannot find user by this email"));
+
+        if (token.equals(user.getAccessToken())){
+            user.setActivated(true);
+            userRepository.save(user);
+            return ResponseEntity.ok(new ResponseJSON("Successfully activated user", 200));
+        }
+        else{
+            return ResponseEntity.badRequest().body(new ResponseJSON("Failed to match tokens", 402));
+        }
+
     }
 }

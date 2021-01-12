@@ -56,6 +56,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
+    @PreAuthorize("permitAll()")
     public ResponseEntity regiser(@RequestBody UserDTO userDTO) {
         return userService.registerUser(userDTO);
     }

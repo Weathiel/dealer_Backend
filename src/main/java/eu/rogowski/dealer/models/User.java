@@ -39,6 +39,8 @@ public class User extends Auditable<String>{
 
     private String accessToken;
 
+    private boolean activated = false;
+
     @ManyToOne
     @JoinColumn
     private Role role;

@@ -1,13 +1,14 @@
 package eu.rogowski.dealer.controllers;
 
+import eu.rogowski.dealer.models.dto.MessageDTO;
 import eu.rogowski.dealer.services.MessagesService;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.mail.internet.AddressException;
 
@@ -19,14 +20,18 @@ public class MessagesController {
     private final MessagesService messagesService;
 
 
-    @GetMapping("/s")
-    @PreAuthorize("hasAnyRole('ROLE_USER' ,'ROLE_WORKER', 'ROLE_ADMIN')")
-    public String send(){
+    @PostMapping("/sendVerify")
+    public ResponseEntity sendUserVerifyEmail(@RequestBody MessageDTO messageDTO) {
         try {
-            messagesService.sendMail();
+            return messagesService.sendVerifyUserMail(messageDTO.getFrom());
         } catch (AddressException e) {
-            return "lol";
+            return ResponseEntity.badRequest().body(messageDTO);
         }
-        return "losssss!";
+    }
+
+    @GetMapping(name = "/verify", params = {"token", "username"})
+    public ModelAndView verifyEmail(@RequestParam String username, @RequestParam String token, RedirectAttributes attributes) {
+        messagesService.verifyEmailToken(username, token).getStatusCode();
+        return new ModelAndView("redirect:" + "http://localhost:4200/");
     }
 }

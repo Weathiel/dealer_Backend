@@ -35,9 +35,4 @@ public class Orders extends Auditable<String> implements Serializable {
     @OneToOne
     @JoinColumn
     private Contract contract;
-
-    @OneToMany
-    @JoinColumn(name = "Orders_order_id")
-    @JsonIgnoreProperties
-    private List<Currency> currencies;
 }
